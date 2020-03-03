@@ -1,6 +1,5 @@
 import { LitElement, html, css } from "lit-element";
 import "mv-container";
-import "mv-font-awesome";
 import "./mv-progress-bar.js";
 
 const FILE = {
@@ -16,7 +15,6 @@ const FILE = {
 export class MvProgressbar extends LitElement {
   static get properties() {
     return {
-      open: { type: Boolean, attribute: true },
       theme: { type: String, attribute: true },
       count: { type: Number }
     };
@@ -36,17 +34,6 @@ export class MvProgressbar extends LitElement {
         --mv-container-padding: 20px 30px; 
       }
       
-      mv-fa[icon="lightbulb"] {
-        font-size: 50px;
-        cursor: pointer;
-        margin: 20px;
-      }
-      
-      .theme {
-        display: flex;
-        justify-content: flex-start;
-      }
-      
       .content {
         display: flex;
         justify-content: space-between;
@@ -57,13 +44,62 @@ export class MvProgressbar extends LitElement {
       .progress {
         color: #4FACFE;
       }
+      
+      fieldset > label, label > input {
+        cursor: pointer;
+      }
+      
+      fieldset {
+        width: 120px;
+        margin-left: 10px;
+        border:2px solid red;
+        -moz-border-radius:8px;
+        -webkit-border-radius:8px;	
+        border-radius:8px;
+        color: #818181;
+      }
+      
+      legend {
+        font-weight: 500;
+        color: red;
+      }
+      
+      .progressbar {
+        margin-top: 30px;
+      }
+      
+      .progressbar  mv-progressbar, mv-progressbar[type=infinite] {
+        --mv-progressbar-height: 20px;
+      }
+      
+      .loading {
+        display: block;
+        text-align: center;
+        font-weight: 500;
+        color: #FFFFFF;
+      }
+      
+      .dotdotdot:after {
+        font-weight: 300;
+        content: '...';
+        display: inline-block;
+        width: 20px;
+        text-align: left;
+        animation: dotdotdot 1.5s linear infinite;
+      }
+      
+      @keyframes dotdotdot {
+        0%   { content: '...'; }
+        25% { content: ''; }
+        50% { content: '.'; }
+        75% { content: '..'; }
+      }
     `;
   }
 
   constructor() {
     super();
-    this.theme = "light";
-    this.open = true;
+    this.theme = "dark";
     this.count = 0;
 
     setInterval(() => {
@@ -72,8 +108,7 @@ export class MvProgressbar extends LitElement {
   }
 
   render() {
-    const iconColor = `color: ${this.open ? "yellow" : ""}`;
-    const textColor = `color: ${this.open ? "" : "#FFFFFF"}`;
+    const textColor = `color: ${this.theme === "light" ? "" : "#FFFFFF"}`;
     const progressValue = this.count;
     const maxValue = 52;
     const value = 52*progressValue/100;
@@ -81,46 +116,65 @@ export class MvProgressbar extends LitElement {
     const maxFile = 7;
     const fileValue = 7*progressValue/100;
     const downloadedFile = Number.isInteger(fileValue) ? fileValue : Math.floor(fileValue);
+    const progressbarTheme = this.theme === "dark" ? "light" : "dark";
+    
     return html`
-      <div class="theme">
-        <mv-fa icon="lightbulb" style="${iconColor}" @click=${this.toggleLightBulb}></mv-fa>
-      </div>
+      <fieldset>
+        <legend>Theme</legend>
+        <label><input type="radio" name="theme" value="light" @change="${this.radioChange}" />Light</label>
+        <label><input type="radio" name="theme" value="dark" checked @change="${this.radioChange}" />Dark</label>
+      </fieldset>
       <mv-container .theme="${this.theme}" style="${textColor}">
         <h2>Default</h2>
         <div class="content">
-           <div>${FILE[downloadedFile.toString()]} (${downloadedFile}/${maxFile})</div>
-           <div>
-             <div class="progress">${progressValue}% Completed</div>
-             <div>${downloadedValue}MB / ${maxValue}MB</div>
-           </div>
+          <div>${FILE[downloadedFile.toString()]} (${downloadedFile}/${maxFile})</div>
+          <div>
+            <div class="progress">${progressValue}% Completed</div>
+            <div>${downloadedValue}MB / ${maxValue}MB</div>
+          </div>
         </div>
         <mv-progressbar
           .value="${progressValue}"
+          .theme="${progressbarTheme}"
         ></mv-progressbar>
+        
         <h2>Stripes</h2>
         <mv-progressbar
           .value="${progressValue}"
           striped
+          .theme="${progressbarTheme}"
         ></mv-progressbar>
+        
         <h2>Stripes and animation</h2>
         <mv-progressbar
           .value="${progressValue}"
           striped
           animated
+          .theme="${progressbarTheme}"
         ></mv-progressbar>
+        <div class="progressbar">
+          <mv-progressbar
+            striped
+            animated
+            value=100
+            .theme="${progressbarTheme}"
+          >
+            <span class="loading">Please wait<span class="dotdotdot"></span></span>
+          </mv-progressbar>
+        </div>
+        
         <h2>Infinite</h2>
-        <mv-progressbar
-          value="100"
-          striped
-          animated
+        <mv-progressbar 
+          type="infinite"
+          .theme="${progressbarTheme}"
         ></mv-progressbar>
       </mv-container>
     `;
   }
 
-  toggleLightBulb = () => {
-    this.open = !this.open;
-    if (this.open) {
+  radioChange = originalEvent => {
+    const { target: { value } } = originalEvent;
+    if (value === "light") {
       this.theme = "light";
     } else {
       this.theme = "dark";

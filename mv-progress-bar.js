@@ -4,48 +4,62 @@ export class MvProgressbar extends LitElement {
   static get properties() {
     return {
       value: { type: Number, attribute: true },
-      type: { type: String, attribute: true },
       striped: { type: Boolean, attribute: true },
-      animated: { type: Boolean, attribute: true }
+      animated: { type: Boolean, attribute: true },
+
+      //  valid type values are: "default", "infinite"
+      //    default: "default"
+      type: { type: String, attribute: true },
+
+      //  valid theme values are: "light", "dark"
+      //    default: "light"
+      theme: { type: String, attribute: true }
     };
   }
 
   static get styles() {
     return css`
-			:host {
-				--font-family: var(--mv-textarea-font-family, MuseoSans);
-				--font-size: var(--font-size-m, 16px);
-        --color: var(--mv-textarea-color, #818181);
+      :host {
+        --font-family: var(--mv-progressbar-font-family, MuseoSans);
+        --font-size: var(--font-size-m, 16px);
+        --color: var(--mv-progressbar-color, #818181);
+        --height: var(--mv-progressbar-height, 10px);
+        --progress-background: var(--mv-progressbar-progress-background, #E4E3E3);
+        --border-radius: var(--mv-progressbar-border-radius, 25px);
+        --light-background: var(--mv-progressbar-light-background, linear-gradient(to left, rgba(79, 172, 254, 1) 0%, rgba(0, 242, 254, 1) 100%));
+        --dark-background: var(--mv-progressbar-dark-background, linear-gradient(to right, #4E686D 0%, #0C14FE 180%));
       }
       
-      .progress-bar { 
+      .progress { 
         position: relative;
-        -moz-border-radius: 25px;
-        -webkit-border-radius: 25px;
-        border-radius: 25px;
-        height: 10px;
-        background: #E4E3E3;
+        -moz-border-radius: var(--border-radius);
+        -webkit-border-radius: var(--border-radius);
+        border-radius: var(--border-radius);
+        height: var(--height);
+        background: var(--progress-background);
+        overflow: hidden;
       }
       
-      .progress-bar > span {
+      .progress > span {
         display: block;
         position: relative;
         overflow: hidden;
-        -moz-border-radius: 25px;
-        -webkit-border-radius: 25px;
+        -moz-border-radius: var(--border-radius);
+        -webkit-border-radius: var(--border-radius);
+        border-radius: var(--border-radius);
         height: 100%;
       }
       
       @-webkit-keyframes move {
-          0% {
-             background-position: 0 0;
-          }
-          100% {
-             background-position: 50px 50px;
-          }
+        0% {
+          background-position: 0 0;
+        }
+        100% {
+          background-position: 50px 50px;
+        }
       }
       
-      .progress-bar[striped] > span:after {
+      .progress[striped] > span:after, .infinite[striped] > span:after {
         content: "";
         position: absolute;
         top: 0; left: 0; bottom: 0; right: 0;
@@ -59,7 +73,7 @@ export class MvProgressbar extends LitElement {
            );
         background-image: 
           -moz-linear-gradient(
-            -45deg, 
+              -45deg, 
               rgba(255, 255, 255, .2) 25%, 
               transparent 25%, 
               transparent 50%, 
@@ -69,36 +83,59 @@ export class MvProgressbar extends LitElement {
               transparent
            );
         z-index: 1;
-        -webkit-background-size: 20px 20px;
-        -moz-background-size: 20px 20px;
+        -webkit-background-size: 40px 40px;
+        -moz-background-size: 40px 40px;
         overflow: hidden;
       }
       
-      .progress-bar[striped][animated] > span:after {
+      .progress[striped][animated] > span:after, .infinite[striped][animated] > span:after {
         -webkit-animation: move 2s linear infinite;
       }
       
-      .download > span {
-        background-color: #f0a3a3;
-        background-image: -webkit-linear-gradient(right, rgba(79, 172, 254, 1) 0%, rgba(0, 242, 254, 1) 100%);
-        background-image: -moz-linear-gradient(right, rgba(79, 172, 254, 1) 0%, rgba(0, 242, 254, 1) 100%); 
+      .default > span, .infinite > span {
+        background: var(--background);
       }
-		`;
+      
+      .infinite > span {
+        position: relative;
+        animation: progress-infinite 6s linear infinite;
+      }
+      
+      @keyframes progress-infinite {
+        from { left: -25%; width: 25%; }
+        to { left: 100%; width: 25%;}
+      }
+      
+      .light {
+        --background: var(--light-background);
+      }
+      
+      .dark {
+        --background: var(--dark-background);
+      }
+    `;
   }
 
   constructor() {
     super();
     this.striped = false;
     this.animated = false;
-    this.type = "download";
-    this.value = 50;
+    this.type = "default";
+    this.value = null;
+    this.theme = "light";
   }
 
   render() {
     return html`
-      <div class="progress-bar ${this.type}" ?striped="${this.striped}" ?animated="${this.animated}">
-			  <span style="width: ${this.value}%"></span>
-		  </div>
+      <div 
+        class="progress ${this.type} ${this.theme}" 
+        ?striped="${this.striped}"
+        ?animated="${this.animated}"
+      >
+        <span style="width: ${this.value}%">
+          <slot></slot>
+        </span>
+      </div>
     `;
   }
 }

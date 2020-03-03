@@ -12,10 +12,25 @@ To experiment with the MvProgressbar component.
 
 3. Update the progress bar demo component in demo.js file
 
+The `mv-progressbar` includes:
+ * 2 `type`:
+```
+default, infinite 
+```
+* 2 `theme`:
+```
+light, dark 
+```
+
 ## Sample usage
 
 ```html
 <mv-progressbar
+  type="infinite"                 //use the default or infinite progress bar
+  .value="${progressValue}"       //the value of the progress bar
+  striped                         //show the stripes
+  animated                        //show the animation of the stripes
+  .theme="${progressbarTheme}"    //toggle the light and dark theme mode
 ></mv-progressbar>
 ```
 
