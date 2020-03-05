@@ -53,9 +53,9 @@ export class MvProgressbar extends LitElement {
         width: 120px;
         margin-left: 10px;
         border:2px solid red;
-        -moz-border-radius:8px;
-        -webkit-border-radius:8px;	
-        border-radius:8px;
+        -moz-border-radius: 8px;
+        -webkit-border-radius: 8px;	
+        border-radius: 8px;
         color: #818181;
       }
       
@@ -99,7 +99,7 @@ export class MvProgressbar extends LitElement {
 
   constructor() {
     super();
-    this.theme = "dark";
+    this.theme = "light";
     this.count = 0;
 
     setInterval(() => {
@@ -108,7 +108,6 @@ export class MvProgressbar extends LitElement {
   }
 
   render() {
-    const textColor = `color: ${this.theme === "light" ? "" : "#FFFFFF"}`;
     const progressValue = this.count;
     const maxValue = 52;
     const value = 52*progressValue/100;
@@ -116,15 +115,15 @@ export class MvProgressbar extends LitElement {
     const maxFile = 7;
     const fileValue = 7*progressValue/100;
     const downloadedFile = Number.isInteger(fileValue) ? fileValue : Math.floor(fileValue);
-    const progressbarTheme = this.theme === "dark" ? "light" : "dark";
-    
+    const { theme } = this;
+
     return html`
       <fieldset>
         <legend>Theme</legend>
-        <label><input type="radio" name="theme" value="light" @change="${this.radioChange}" />Light</label>
-        <label><input type="radio" name="theme" value="dark" checked @change="${this.radioChange}" />Dark</label>
+        <label><input type="radio" name="theme" value="light" checked @change="${this.changeTheme}" />Light</label>
+        <label><input type="radio" name="theme" value="dark" @change="${this.changeTheme}" />Dark</label>
       </fieldset>
-      <mv-container .theme="${this.theme}" style="${textColor}">
+      <mv-container .theme="${theme}">
         <h2>Default</h2>
         <div class="content">
           <div>${FILE[downloadedFile.toString()]} (${downloadedFile}/${maxFile})</div>
@@ -135,14 +134,14 @@ export class MvProgressbar extends LitElement {
         </div>
         <mv-progressbar
           .value="${progressValue}"
-          .theme="${progressbarTheme}"
+          .theme="${theme}"
         ></mv-progressbar>
         
         <h2>Stripes</h2>
         <mv-progressbar
           .value="${progressValue}"
           striped
-          .theme="${progressbarTheme}"
+          .theme="${theme}"
         ></mv-progressbar>
         
         <h2>Stripes and animation</h2>
@@ -150,14 +149,14 @@ export class MvProgressbar extends LitElement {
           .value="${progressValue}"
           striped
           animated
-          .theme="${progressbarTheme}"
+          .theme="${theme}"
         ></mv-progressbar>
         <div class="progressbar">
           <mv-progressbar
             striped
             animated
             value=100
-            .theme="${progressbarTheme}"
+            .theme="${theme}"
           >
             <span class="loading">Please wait<span class="dotdotdot"></span></span>
           </mv-progressbar>
@@ -166,19 +165,15 @@ export class MvProgressbar extends LitElement {
         <h2>Infinite</h2>
         <mv-progressbar 
           type="infinite"
-          .theme="${progressbarTheme}"
+          .theme="${theme}"
         ></mv-progressbar>
       </mv-container>
     `;
   }
 
-  radioChange = originalEvent => {
+  changeTheme = originalEvent => {
     const { target: { value } } = originalEvent;
-    if (value === "light") {
-      this.theme = "light";
-    } else {
-      this.theme = "dark";
-    }
+    this.theme = value;
   };
 }
 

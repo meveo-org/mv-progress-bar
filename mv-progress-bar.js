@@ -20,9 +20,8 @@ export class MvProgressbar extends LitElement {
   static get styles() {
     return css`
       :host {
-        --font-family: var(--mv-progressbar-font-family, MuseoSans);
-        --font-size: var(--font-size-m, 16px);
-        --color: var(--mv-progressbar-color, #818181);
+        font-family: var(--font-family, MuseoSans);
+        font-size: var(--font-size-m, 16px);
         --height: var(--mv-progressbar-height, 10px);
         --progress-background: var(--mv-progressbar-progress-background, #E4E3E3);
         --border-radius: var(--mv-progressbar-border-radius, 25px);
