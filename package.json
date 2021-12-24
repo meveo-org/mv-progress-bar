@@ -1,0 +1,22 @@
+{
+  "name": "@meveo-org/mv-progress-bar",
+  "version": "1.0.0",
+  "description": "MvProgressbar is a Meveo progress bar component based on lit-element.",
+  "main": "mv-progress-bar.js",
+  "scripts": {
+    "serve": "es-dev-server --node-resolve --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/meveo-org/mv-progress-bar.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/meveo-org/mv-progress-bar/issues"
+  },
+  "homepage": "https://github.com/meveo-org/mv-progress-bar#readme",
+  "devDependencies": {
+    "es-dev-server": "^1.46.1"
+  }
+}
